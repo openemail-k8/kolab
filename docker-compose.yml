@@ -15,7 +15,7 @@ services:
     tmpfs:
       - /run
     environment:
-      - TZ=Europe/Moscow
+      - TZ=Asia/Colombo
       - LDAP_ADMIN_PASS=<password>
       - LDAP_MANAGER_PASS=<password>
       - LDAP_CYRUS_PASS=<password>
