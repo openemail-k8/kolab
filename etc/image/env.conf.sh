@@ -1,0 +1,57 @@
+#!/bin/bash
+#
+# Default environment variables loading config.
+#
+# Example:
+#   USER=username    - Check for $USER have value. If not, setting USER='username'.
+#   PASSWORD=        - Check for $PASSWORD have value. If not, send error.
+#
+
+
+# Options
+WEBSERVER="nginx"
+FORCE_HTTPS=true
+NGINX_CACHE=false
+#SPAM_SIEVE=true
+SPAM_SIEVE=true
+FAIL2BAN=true
+DKIM=true
+SYSLOG=true
+CERT_PATH="/etc/pki/tls/kolab"
+KOLAB_DEFAULT_LOCALE="en_US"
+ROUNDCUBE_SKIN="chameleon"
+ROUNDCUBE_TRASH="trash"
+ROUDCUBE_PLUGIN_ZIPDOWNLOAD=true
+SPAM_SIEVE_TIMEOUT="15m"
+FAIL2BAN_BANTIME="3600"
+
+# Sizes
+KOLAB_DEFAULT_QUOTA="1G"
+MAX_MEMORY_SIZE="256M"
+MAX_FILE_SIZE="30M"
+MAX_MAIL_SIZE="30M"
+MAX_MAILBOX_SIZE="50M"
+MAX_BODY_SIZE="50M"
+
+# Services
+SERVICE_CYRUS_IMAPD=true
+SERVICE_DBUS=true
+SERVICE_FAIL2BAN=true
+SERVICE_GUAM=true
+SERVICE_HTTPD=true
+SERVICE_KOLAB_SASLAUTHD=true
+SERVICE_KOLABD=true
+SERVICE_MANTICORE=true
+SERVICE_MARIADB=true
+SERVICE_MONGOD=true
+SERVICE_OPENDKIM=true
+SERVICE_POSTFIX=true
+SERVICE_WALLACE=true
+SERVICE_AMAVISD=true
+
+SERVICE_RSYSLOG=false
+SERVICE_CROND=true
+SERVICE_NGINX=false
+SERVICE_PHP_FPM=false
+SERVICE_FAIL2BAN=false
+SERVICE_SET_SPAM_SIEVE=false

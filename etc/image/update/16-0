@@ -1,0 +1,76 @@
+#!/bin/bash
+
+# Update from v3.4-1
+echo "Upgrading from Kolab 3.4-1 docker image"
+
+source '/lib/start/functions.sh'
+
+OLD_CONFIGS=(
+    amavisd
+    clamd.conf
+    clamd.d
+    cyrus.conf
+    fail2ban
+    httpd
+    imapd.annotations.conf
+    imapd.conf
+    iRony
+    mail
+    my.cnf
+    my.cnf.d
+    nginx
+    php.d
+    php-fpm.conf
+    php-fpm.d
+    php.ini
+    postfix
+    roundcubemail
+    supervisord.conf
+)
+
+mkdir /config/3.4-update.backup
+for i in ${OLD_CONFIGS[@]}; do
+    echo mv /config/$i /config/3.4-update.backup/$(basename $i)
+    mv /config/$i /config/3.4-update.backup/$(basename $i)
+    rm -f /etc/$i
+    cp -a /etc/$i.dist /etc/$i
+done
+
+chown opendkim: -R /etc/opendkim/
+chown -R dirsrv: /etc/dirsrv/slapd-mail/ /var/lib/dirsrv/ /var/log/dirsrv/
+
+mkdir -p /var/run/mongodb/ /var/run/mongodb/ /var/lib/mongodb/
+chown -R mongodb:mongodb /var/run/mongodb/ /var/run/mongodb/ /var/lib/mongodb/
+
+cat > /config/sysconfig/dirsrv-$(hostname -s) <<EOT
+SERVER_DIR=/usr/lib64/dirsrv
+SERVERBIN_DIR=/usr/sbin
+CONFIG_DIR=/etc/dirsrv/slapd-$(hostname -s)
+INST_DIR=/usr/lib64/dirsrv/slapd-$(hostname -s)
+RUN_DIR=/var/run/dirsrv
+DS_ROOT=
+PRODUCT_NAME=slapd
+EOT
+
+setup-ds.pl --silent --update
+
+
+image_stor
+
+chk_env MYSQL_ROUNDCUBE_PASS
+chk_env MYSQL_ROOT_PASS
+
+/lib/start/setup-kolab.exp guam
+/lib/start/setup-kolab.exp manticore
+systemctl start mariadb.service
+/lib/start/setup-kolab.exp roundcube
+/lib/start/setup-kolab.exp imap
+
+rm -rf /etc/dirsrv/schema/
+cp -a /etc/dirsrv.dist/schema/ /etc/dirsrv/schema/
+sed -i 's/my $retry =.*;/my $retry = 3;/g' /usr/lib64/dirsrv/perl/DSCreate.pm
+setup-ds.pl -ddd --silent --update
+
+setup_kolab_after
+
+echo "Upgrading from Kolab 3.4-1 docker image Finished!"
